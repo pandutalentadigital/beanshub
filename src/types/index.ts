@@ -82,4 +82,5 @@ export interface Notification {
   message: string;
   timestamp: Date;
   read: boolean;
+  userId?: string; // Added for Firestore filtering
 }

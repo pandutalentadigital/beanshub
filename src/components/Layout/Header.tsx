@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Bell, User, LogOut, ChevronDown } from 'lucide-react';
 import { useAppContext } from '../../context/AppContext';
+import { signOutUser } from '../../services/authService';
 
 export default function Header() {
   const { state, dispatch } = useAppContext();
@@ -10,8 +11,13 @@ export default function Header() {
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
-  const handleLogout = () => {
-    dispatch({ type: 'SET_USER', payload: null });
+  const handleLogout = async () => {
+    try {
+      await signOutUser();
+      dispatch({ type: 'SET_USER', payload: null });
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
   };
 
   const markNotificationRead = (id: string) => {
@@ -89,7 +95,9 @@ export default function Header() {
               className="flex items-center space-x-2 sm:space-x-3 p-2 rounded-lg hover:bg-gray-100 transition-colors"
             >
               <div className="w-6 h-6 sm:w-8 sm:h-8 bg-amber-600 rounded-full flex items-center justify-center">
-                <User className="h-3 w-3 sm:h-5 sm:w-5 text-white" />
+                <span className="text-white font-medium text-sm">
+                  {user?.name?.charAt(0).toUpperCase()}
+                </span>
               </div>
               <div className="text-left hidden sm:block">
                 <p className="text-sm font-medium text-gray-800 truncate max-w-32">{user?.name}</p>
